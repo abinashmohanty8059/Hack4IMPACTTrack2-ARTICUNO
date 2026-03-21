@@ -1,0 +1,9 @@
+{
+  "name": "Doctor",
+  "specialization": "Senior Cardiologist & Critical Care Specialist",
+  "hospital": "City General Hospital",
+  "email": "doctor@health.com",
+  "phone": "+91 98765 43210",
+  "bio": "Dedicated medical professional with 15+ years of experience in cardiac care and emergency medicine. Leading the remote patient monitoring initiative to improve patient outcomes through real-time data analysis.",
+  "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul"
+}

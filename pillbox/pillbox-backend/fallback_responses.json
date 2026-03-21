@@ -1,0 +1,6 @@
+{
+  "who are my patients?": "You currently have three patients under your care: Rahul Sharma, Ananya Das, and Arjun Mehta. Rahul is currently flagged for closer monitoring due to recent vital trends.",
+  "generate a daily clinical summary report": "Daily Clinical Summary Report:\n\n1. Rahul Sharma: Patient is showing signs of moderate respiratory distress with SpO2 levels fluctuating around 90%. Temperature is elevated at 101.2°F. Recommend immediate clinical review.\n2. Ananya Das: Stable vitals. SpO2 at 98%, Temperature 98.6°F. Medication adherence is 100%.\n3. Arjun Mehta: Stable vitals. SpO2 at 97%, Temperature 98.9°F. One pending medication dose for Blood Pressure.\n\nOverall, the ward is stable with one high-priority patient.",
+  "status of rahul sharma": "Rahul Sharma (ID: 06fdac09) is currently in the High Risk zone. Latest vitals: SpO2 90%, Temp 101.2°F. He has missed one dose of Ibuprofen scheduled for 10:00 AM.",
+  "default": "I am currently operating in offline mode. Based on the last synchronized data, your patients are stable, but I recommend checking the live dashboard for the most recent vital updates."
+}
