@@ -119,15 +119,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.blueGrey[900]!,
-                    Colors.black,
-                  ],
+                  colors: [Colors.blueGrey[900]!, Colors.black],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.teal.withOpacity(0.3),
@@ -148,12 +148,36 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildHealthRow("Heart Rate", "${heartRate.toStringAsFixed(1)} BPM", Colors.orange),
-                  _buildHealthRow("Blood Oxygen", "${oxygenLevel.toStringAsFixed(1)}%", Colors.yellow),
-                  _buildHealthRow("Body Temperature", "${bodyTemp.toStringAsFixed(1)}C", Colors.red),
-                  _buildHealthRow("Blood Pressure", "$bloodPressure mmHg", Colors.blue),
-                  _buildHealthRow("Stress Level", "${stressLevel.toStringAsFixed(0)}%", Colors.purple),
-                  _buildHealthRow("Glucose Level", "${glucoseLevel.toStringAsFixed(0)} mg/dL", Colors.green),
+                  _buildHealthRow(
+                    "Heart Rate",
+                    "${heartRate.toStringAsFixed(1)} BPM",
+                    Colors.orange,
+                  ),
+                  _buildHealthRow(
+                    "Blood Oxygen",
+                    "${oxygenLevel.toStringAsFixed(1)}%",
+                    Colors.yellow,
+                  ),
+                  _buildHealthRow(
+                    "Body Temperature",
+                    "${bodyTemp.toStringAsFixed(1)}C",
+                    Colors.red,
+                  ),
+                  _buildHealthRow(
+                    "Blood Pressure",
+                    "$bloodPressure mmHg",
+                    Colors.blue,
+                  ),
+                  _buildHealthRow(
+                    "Stress Level",
+                    "${stressLevel.toStringAsFixed(0)}%",
+                    Colors.purple,
+                  ),
+                  _buildHealthRow(
+                    "Glucose Level",
+                    "${glucoseLevel.toStringAsFixed(0)} mg/dL",
+                    Colors.green,
+                  ),
                 ],
               ),
             ),
@@ -177,10 +201,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            color.withOpacity(0.3),
-            Colors.black,
-          ],
+          colors: [color.withOpacity(0.3), Colors.black],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -220,10 +241,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ],
           ),
           const SizedBox(height: 6),
-          Text(
-            unit,
-            style: TextStyle(color: color, fontSize: 12),
-          ),
+          Text(unit, style: TextStyle(color: color, fontSize: 12)),
         ],
       ),
     );
@@ -235,7 +253,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 14)),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
           Text(value, style: TextStyle(color: valueColor, fontSize: 14)),
         ],
       ),

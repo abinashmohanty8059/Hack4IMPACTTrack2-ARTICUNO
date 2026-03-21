@@ -32,10 +32,14 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {},
-                      icon: const Icon(Icons.menu, color: Colors.white, size: 30),
+                      icon: const Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                     ),
                     const Text(
-                      "ARTICUNO",
+                      "MEDLINK",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -45,8 +49,11 @@ class HomeScreen extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {},
-                      icon: const Icon(Icons.notifications_none,
-                          color: Colors.white, size: 30),
+                      icon: const Icon(
+                        Icons.notifications_none,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                     ),
                   ],
                 ),
@@ -103,7 +110,9 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: 20),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(15),
@@ -160,8 +169,10 @@ class HomeScreen extends StatelessWidget {
 
                       // Quick Actions
                       const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -177,7 +188,9 @@ class HomeScreen extends StatelessWidget {
 
                       Container(
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
@@ -250,7 +263,9 @@ class HomeScreen extends StatelessWidget {
                               alignment: Alignment.centerRight,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 8),
+                                  horizontal: 15,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(15),
@@ -300,10 +315,7 @@ class HomeScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            color.withOpacity(0.7),
-            color.withOpacity(0.4),
-          ],
+          colors: [color.withOpacity(0.7), color.withOpacity(0.4)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -352,10 +364,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.white.withOpacity(0.9),
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.9)),
         ),
       ],
     );
