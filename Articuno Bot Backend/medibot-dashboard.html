@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articuno Bot — Doctor Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #090c10;
+  --s1: #0f1318;
+  --s2: #151a21;
+  --s3: #1c222b;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --text: #dde3ee;
+  --text2: #7a8499;
+  --text3: #3d4456;
+  --accent: #3b82f6;
+  --accent-dim: rgba(59,130,246,0.1);
+  --accent-border: rgba(59,130,246,0.2);
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,0.1);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.1);
+  --orange: #f97316;
+  --orange-dim: rgba(249,115,22,0.1);
+  --yellow: #eab308;
+  --yellow-dim: rgba(234,179,8,0.1);
+  --r: 8px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 52px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-dot { color: var(--accent); }
+
+.topbar-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  padding: 3px 8px;
+  background: var(--s3);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.ws-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.ws-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text3);
+  transition: background .3s;
+}
+.ws-dot.on { background: var(--green); animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.backend-input {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  background: var(--s3);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 5px 10px;
+  color: var(--text);
+  width: 280px;
+  outline: none;
+}
+.backend-input:focus { border-color: var(--accent-border); }
+
+.btn-connect {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-connect:hover { opacity: .85; }
+
+.btn-refresh {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-refresh:hover { background: var(--s3); color: var(--text); }
+
+/* LAYOUT */
+.layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 290px;
+  min-width: 290px;
+  background: var(--s1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.ftab {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .12s;
+}
+.ftab.active, .ftab:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent-border);
+  color: #93c5fd;
+}
+
+.case-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.case-list::-webkit-scrollbar { width: 3px; }
+.case-list::-webkit-scrollbar-thumb { background: var(--s3); border-radius: 3px; }
+
+.empty-list {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text3);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.empty-list .icon { font-size: 28px; margin-bottom: 10px; opacity: .4; }
+
+.case-card {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .1s;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+.case-card:hover { background: rgba(255,255,255,0.02); }
+.case-card.active { background: var(--accent-dim); border-left-color: var(--accent); }
+
+.cc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
+.cc-name { font-size: 13px; font-weight: 500; color: var(--text); }
+
+.sev {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.sev-critical { background: var(--red-dim); color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+.sev-high { background: var(--orange-dim); color: #fb923c; border: 1px solid rgba(249,115,22,.25); }
+.sev-medium { background: var(--yellow-dim); color: #fbbf24; border: 1px solid rgba(234,179,8,.25); }
+.sev-low { background: var(--green-dim); color: #34d399; border: 1px solid rgba(16,185,129,.25); }
+
+.cc-preview { font-size: 12px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; font-weight: 300; }
+.cc-footer { display: flex; justify-content: space-between; }
+.cc-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); }
+.unread { position: absolute; top: 13px; right: 12px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+
+/* DETAIL PANEL */
+.detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.detail-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text3);
+  font-size: 13px;
+}
+.detail-empty .icon { font-size: 32px; opacity: .2; }
+
+/* DETAIL HEADER */
+.detail-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--s1);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.patient-info h2 { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.patient-info p { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); }
+
+.header-actions { margin-left: auto; display: flex; gap: 6px; }
+
+.hbtn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text2);
+  transition: all .12s;
+}
+.hbtn:hover { background: var(--s3); color: var(--text); }
+.hbtn-green { background: var(--green-dim); color: var(--green); border-color: rgba(16,185,129,.25); }
+.hbtn-green:hover { background: rgba(16,185,129,.18); }
+.hbtn-red { background: var(--red-dim); color: #f87171; border-color: rgba(239,68,68,.25); }
+.hbtn-red:hover { background: rgba(239,68,68,.18); }
+
+/* SCROLL AREA */
+.detail-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.detail-scroll::-webkit-scrollbar { width: 3px; }
+.detail-scroll::-webkit-scrollbar-thumb { background: var(--s3); border-radius: 3px; }
+
+/* AI SUMMARY */
+.ai-card {
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r);
+  background: rgba(59,130,246,0.04);
+  overflow: hidden;
+}
+
+.ai-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  background: rgba(59,130,246,0.07);
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.ai-orb {
+  width: 18px; height: 18px;
+  background: var(--accent);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: white; flex-shrink: 0;
+}
+
+.ai-card-head span { font-size: 11px; font-weight: 600; color: #93c5fd; letter-spacing: .3px; }
+.ai-card-head .ts { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); }
+
+.ai-card-body { padding: 13px; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.chip {
+  font-size: 11px; font-weight: 500;
+  padding: 2px 8px; border-radius: 20px;
+}
+.chip-s { background: var(--orange-dim); color: #fb923c; border: 1px solid rgba(249,115,22,.25); }
+.chip-d { background: var(--accent-dim); color: #93c5fd; border: 1px solid var(--accent-border); }
+.chip-a { background: var(--red-dim); color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+.chip-v { background: var(--yellow-dim); color: #fbbf24; border: 1px solid rgba(234,179,8,.25); }
+.chip-h { background: var(--green-dim); color: #34d399; border: 1px solid rgba(16,185,129,.25); }
+
+.ai-summary-text { font-size: 13px; color: #b0bccf; line-height: 1.65; font-weight: 300; }
+.ai-summary-text strong { color: var(--text); font-weight: 500; }
+
+.ai-rec {
+  margin-top: 10px;
+  padding: 8px 11px;
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 5px 5px 0;
+  font-size: 12px;
+  color: #fca5a5;
+  font-weight: 500;
+}
+
+/* ESCALATION NOTICE */
+.esc-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--red-dim);
+  border: 1px solid rgba(239,68,68,.2);
+  border-radius: var(--r);
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #f87171;
+}
+.esc-notice .ts { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); }
+
+/* CHAT */
+.chat-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--text3);
+}
+
+.chat-thread { display: flex; flex-direction: column; gap: 12px; }
+
+.msg-wrap { display: flex; flex-direction: column; gap: 3px; }
+.msg-row { display: flex; align-items: flex-end; gap: 7px; }
+.msg-row.right { flex-direction: row-reverse; }
+
+.msg-av {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; flex-shrink: 0;
+}
+.av-p { background: var(--s3); color: var(--text2); border: 1px solid var(--border2); }
+.av-ai { background: var(--accent-dim); color: #93c5fd; border: 1px solid var(--accent-border); }
+.av-doc { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+
+.bubble {
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 70%;
+  font-size: 13px;
+  line-height: 1.55;
+  font-weight: 300;
+}
+.bubble-p { background: var(--s2); color: var(--text); border-radius: 12px 12px 12px 3px; border: 1px solid var(--border2); }
+.bubble-ai { background: rgba(20,30,50,.9); color: var(--text); border-radius: 12px 12px 3px 12px; border: 1px solid var(--accent-border); }
+.bubble-doc { background: rgba(10,30,22,.9); color: var(--text); border-radius: 12px 12px 3px 12px; border: 1px solid rgba(16,185,129,.2); }
+
+.sender-tag { font-size: 10px; font-weight: 500; color: var(--text3); padding: 0 3px; margin-bottom: 2px; }
+.sender-tag.ai { color: #5b81f0; }
+.sender-tag.doc { color: var(--green); }
+.sender-tag.right { text-align: right; }
+.msg-ts { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text3); padding: 1px 3px; }
+.msg-ts.right { text-align: right; }
+
+/* INPUT BAR */
+.input-bar {
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--s1);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.doc-input {
+  flex: 1;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 9px 13px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  outline: none;
+  transition: border-color .15s;
+}
+.doc-input:focus { border-color: var(--accent-border); }
+.doc-input::placeholder { color: var(--text3); }
+.doc-input:disabled { opacity: .4; cursor: not-allowed; }
+
+.send-btn {
+  padding: 9px 18px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: opacity .15s;
+  white-space: nowrap;
+}
+.send-btn:hover { opacity: .85; }
+.send-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text);
+  z-index: 999;
+  transform: translateY(60px);
+  opacity: 0;
+  transition: all .25s;
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(16,185,129,.3); color: var(--green); }
+.toast.error { border-color: rgba(239,68,68,.3); color: #f87171; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.detail-header, .ai-card, .esc-notice, .chat-thread { animation: fadeIn .2s ease; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">Articuno<span class="logo-dot">Bot</span></div>
+  <div class="topbar-meta">doctor dashboard · testing</div>
+  <input class="backend-input" id="backendUrl" value="http://localhost:8000" placeholder="http://localhost:8000">
+  <button class="btn-connect" onclick="connect()">Connect</button>
+  <button class="btn-refresh" onclick="loadCases()">↻ Refresh</button>
+  <div class="ws-status">
+    <div class="ws-dot" id="wsDot"></div>
+    <span id="wsLabel">disconnected</span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Escalated cases</div>
+      <div class="filter-tabs">
+        <button class="ftab active" onclick="setFilter('all',this)">All</button>
+        <button class="ftab" onclick="setFilter('critical',this)">Critical</button>
+        <button class="ftab" onclick="setFilter('high',this)">High</button>
+        <button class="ftab" onclick="setFilter('medium',this)">Medium</button>
+      </div>
+    </div>
+    <div class="case-list" id="caseList">
+      <div class="empty-list">
+        <div class="icon">📋</div>
+        <p>Click Connect to load cases</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- DETAIL PANEL -->
+  <main class="detail" id="detail">
+    <div class="detail-empty">
+      <div class="icon">🩺</div>
+      <p>Select a patient case</p>
+    </div>
+  </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let BASE = 'http://localhost:8000';
+let cases = [];
+let activeCase = null;
+let filter = 'all';
+let ws = null;
+let reconnectDelay = 3000;
+let reconnectTimer = null;
+
+const COLORS = [
+  'linear-gradient(135deg,#ef4444,#dc2626)',
+  'linear-gradient(135deg,#f97316,#ea580c)',
+  'linear-gradient(135deg,#a855f7,#7c3aed)',
+  'linear-gradient(135deg,#06b6d4,#0284c7)',
+  'linear-gradient(135deg,#10b981,#059669)',
+  'linear-gradient(135deg,#3b82f6,#2563eb)',
+];
+
+function colorFor(phone) {
+  let h = 0;
+  for (let c of phone) h = (h * 31 + c.charCodeAt(0)) % COLORS.length;
+  return COLORS[Math.abs(h) % COLORS.length];
+}
+
+function formatPhone(p) {
+  if (!p) return '';
+  const s = String(p);
+  if (s.length === 12 && s.startsWith('91'))
+    return '+91 ' + s.slice(2,7) + ' ' + s.slice(7);
+  return '+' + s;
+}
+
+function initials(phone) {
+  const s = String(phone || '');
+  return s.slice(-4,-2) || '??';
+}
+
+function toast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+function timeAgo(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    return Math.floor(diff / 86400) + 'd ago';
+  } catch (e) {
+    return '';
+  }
+}
+
+function connect() {
+  BASE = document.getElementById('backendUrl').value.replace(/\/$/, '');
+  loadCases();
+  connectWS();
+}
+
+function connectWS() {
+  if (reconnectTimer) clearTimeout(reconnectTimer);
+  if (ws) {
+    ws.onclose = null;
+    ws.close();
+  }
+  const wsUrl = BASE.replace('http', 'ws') + '/ws/cases';
+  try {
+    ws = new WebSocket(wsUrl);
+    ws.onopen = () => {
+      reconnectDelay = 3000; // reset backoff on successful connect
+      document.getElementById('wsDot').className = 'ws-dot on';
+      document.getElementById('wsLabel').textContent = 'live';
+      loadCases(); // sync on every (re)connect
+    };
+    ws.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.event === 'ping') return; // ignore keepalive pings
+        if (data.event === 'new_case') {
+          toast('🔺 New escalation: ' + formatPhone(data.phone), 'error');
+        }
+        loadCases(); // always sync list on any non-ping event
+      } catch {}
+    };
+    ws.onclose = () => {
+      document.getElementById('wsDot').className = 'ws-dot';
+      document.getElementById('wsLabel').textContent = 'reconnecting...';
+      reconnectTimer = setTimeout(() => {
+        reconnectDelay = Math.min(reconnectDelay * 1.5, 30000); // max 30s
+        connectWS();
+      }, reconnectDelay);
+    };
+    ws.onerror = () => {
+      // Intentional silence to prevent console error flood
+    };
+  } catch (e) {}
+}
+
+async function loadCases() {
+  BASE = document.getElementById('backendUrl').value.replace(/\/$/, '');
+  try {
+    const res = await fetch(BASE + '/api/cases', { headers: { 'Content-Type': 'application/json' } });
+    if (!res.ok) throw new Error(res.status);
+    cases = await res.json();
+    renderList();
+    if (activeCase) {
+      const updated = cases.find(c => c.phone === activeCase.phone);
+      if (updated) { activeCase = updated; renderDetail(); }
+    }
+  } catch (e) {
+    document.getElementById('caseList').innerHTML = `
+      <div class="empty-list">
+        <div class="icon">⚠️</div>
+        <p>Cannot reach backend<br><small>${BASE}</small></p>
+      </div>`;
+  }
+}
+
+function setFilter(f, btn) {
+  filter = f;
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const filtered = filter === 'all' ? cases : cases.filter(c => c.severity === filter);
+  const el = document.getElementById('caseList');
+
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty-list"><div class="icon">✅</div><p>No escalated cases yet. Waiting for patient messages...</p></div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map(c => `
+    <div class="case-card ${activeCase?.phone === c.phone ? 'active' : ''}" onclick="openCase('${c.phone}')">
+      <div class="cc-top">
+        <span class="cc-name">${formatPhone(c.phone)}</span>
+        <span class="sev sev-${c.severity}">${c.severity}</span>
+      </div>
+      <div class="cc-preview">${c.chief_complaint || c.summary_text || 'Escalated case'}</div>
+      <div class="cc-footer">
+        <span class="cc-meta">${timeAgo(c.escalated_at)}</span>
+        <span class="cc-meta">${(c.conversation || []).length} msgs</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function openCase(phone) {
+  BASE = document.getElementById('backendUrl').value.replace(/\/$/, '');
+  try {
+    const res = await fetch(BASE + '/api/cases/' + phone, { headers: { 'Content-Type': 'application/json' } });
+    activeCase = await res.json();
+    renderList();
+    renderDetail();
+  } catch (e) {
+    toast('Failed to load case', 'error');
+  }
+}
+
+function renderDetail() {
+  const c = activeCase;
+  if (!c) return;
+
+  const oldInput = document.getElementById('docInput');
+  const savedText = oldInput ? oldInput.value : '';
+  const hadFocus = document.activeElement === oldInput;
+
+  const oldScroll = document.getElementById('detailScroll');
+  const savedScroll = oldScroll ? oldScroll.scrollTop : null;
+  const isScrolledToBottom = oldScroll ? (oldScroll.scrollHeight - oldScroll.scrollTop - oldScroll.clientHeight <= 20) : true;
+
+  const chips = [
+    ...(c.symptoms || []).map(s => `<span class="chip chip-s">● ${s}</span>`),
+    c.duration ? `<span class="chip chip-d">⏱ ${c.duration}</span>` : '',
+    c.allergies && c.allergies !== 'none' ? `<span class="chip chip-a">⚠ ${c.allergies}</span>` : '',
+    c.medications && c.medications !== 'none' ? `<span class="chip chip-v">💊 ${c.medications}</span>` : '',
+    ...(c.red_flags || []).map(r => `<span class="chip chip-a">🚩 ${r}</span>`),
+  ].filter(Boolean).join('');
+
+  const msgs = (c.conversation || []).map(m => {
+    const role = m.role;
+    const text = (m.parts && m.parts[0]?.text) || m.text || '';
+    const time = m.sent_at || '';
+    if (role === 'user') return `
+      <div class="msg-wrap">
+        <div class="sender-tag">Patient · ${formatPhone(c.phone)}</div>
+        <div class="msg-row">
+          <div class="msg-av av-p">${initials(c.phone)}</div>
+          <div class="bubble bubble-p">${text}</div>
+        </div>
+        ${time ? `<div class="msg-ts">${new Date(time).toLocaleTimeString()}</div>` : ''}
+      </div>`;
+    if (role === 'model') return `
+      <div class="msg-wrap">
+        <div class="sender-tag ai right">Articuno Bot AI</div>
+        <div class="msg-row right">
+          <div class="msg-av av-ai">AI</div>
+          <div class="bubble bubble-ai">${text}</div>
+        </div>
+        ${time ? `<div class="msg-ts right">${new Date(time).toLocaleTimeString()}</div>` : ''}
+      </div>`;
+    if (role === 'doctor') return `
+      <div class="msg-wrap">
+        <div class="sender-tag doc right">Doctor</div>
+        <div class="msg-row right">
+          <div class="msg-av av-doc">DR</div>
+          <div class="bubble bubble-doc">${text}</div>
+        </div>
+        ${time ? `<div class="msg-ts right">${new Date(time).toLocaleTimeString()}</div>` : ''}
+      </div>`;
+    return '';
+  }).join('');
+
+  document.getElementById('detail').innerHTML = `
+    <div class="detail-header">
+      <div class="avatar" style="background:${colorFor(c.phone)}">${initials(c.phone)}</div>
+      <div class="patient-info">
+        <h2>${formatPhone(c.phone)}</h2>
+        <p>${c.chief_complaint || c.summary_text?.substring(0,60) || 'Escalated case'}</p>
+      </div>
+      <div class="header-actions">
+        <button class="hbtn" onclick="resetConvo()">↺ Reset Chat</button>
+        <button class="hbtn hbtn-green" onclick="focusInput()">💬 Reply</button>
+        <button class="hbtn hbtn-red" onclick="resolveCase()">✔ Resolve</button>
+      </div>
+    </div>
+
+    <div class="detail-scroll" id="detailScroll">
+      <div class="ai-card">
+        <div class="ai-card-head">
+          <div class="ai-orb">✦</div>
+          <span>AI SUMMARY</span>
+          <span class="ts">${timeAgo(c.escalated_at)}</span>
+        </div>
+        <div class="ai-card-body">
+          ${chips ? `<div class="chip-row">${chips}</div>` : ''}
+          <p class="ai-summary-text">${c.summary_text || 'No summary available.'}</p>
+          ${c.recommendation ? `<div class="ai-rec">⚠ ${c.recommendation}</div>` : ''}
+        </div>
+      </div>
+
+      ${c.escalation_reason ? `
+      <div class="esc-notice">
+        <span>🔺</span>
+        <span>${c.escalation_reason || 'Auto-escalated by AI'}</span>
+        <span class="ts">${timeAgo(c.escalated_at)}</span>
+      </div>` : ''}
+
+      <p class="chat-label">Conversation</p>
+      <div class="chat-thread">${msgs || '<p style="color:var(--text3);font-size:13px">No messages yet</p>'}</div>
+    </div>
+
+    <div class="input-bar">
+      <input class="doc-input" id="docInput" placeholder="Type your reply to patient…" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="send-btn" onclick="sendMsg()">Send →</button>
+    </div>
+  `;
+
+  const newInput = document.getElementById('docInput');
+  if (newInput) {
+    newInput.value = savedText;
+    if (hadFocus) {
+      newInput.focus();
+      newInput.setSelectionRange(savedText.length, savedText.length);
+    }
+  }
+
+  const newScroll = document.getElementById('detailScroll');
+  if (newScroll) {
+    if (isScrolledToBottom || savedScroll === null) {
+      newScroll.scrollTop = newScroll.scrollHeight;
+    } else {
+      newScroll.scrollTop = savedScroll;
+    }
+  }
+}
+
+function focusInput() {
+  document.getElementById('docInput')?.focus();
+}
+
+async function sendMsg() {
+  const input = document.getElementById('docInput');
+  const msg = input?.value?.trim();
+  if (!msg || !activeCase) return;
+  input.value = '';
+  input.disabled = true;
+
+  try {
+    const res = await fetch(BASE + '/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: activeCase.phone, message: msg })
+    });
+    if (!res.ok) throw new Error();
+
+    const caseRes = await fetch(BASE + '/api/cases/' + activeCase.phone, { headers: { 'Content-Type': 'application/json' } });
+    const updated = await caseRes.json();
+    activeCase = updated;
+    renderDetail();
+    setTimeout(() => {
+      const s = document.getElementById('detailScroll');
+      if (s) s.scrollTop = s.scrollHeight;
+    }, 50);
+    toast('Message sent ✓', 'success');
+  } catch (e) {
+    toast('Failed to send', 'error');
+  } finally {
+    document.getElementById('docInput')?.removeAttribute('disabled');
+    document.getElementById('docInput')?.focus();
+  }
+}
+
+async function resolveCase() {
+  if (!activeCase || !confirm('Mark this case as resolved?')) return;
+  BASE = document.getElementById('backendUrl').value.replace(/\/$/, '');
+  try {
+    await fetch(BASE + '/api/cases/' + activeCase.phone + '/resolve', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    toast('Case resolved ✓', 'success');
+    cases = cases.filter(c => c.phone !== activeCase.phone);
+    activeCase = null;
+    renderList();
+    document.getElementById('detail').innerHTML = `
+      <div class="detail-empty">
+        <div class="icon">✅</div>
+        <p>Case resolved. Select another.</p>
+      </div>`;
+  } catch (e) {
+    toast('Failed to resolve', 'error');
+  }
+}
+
+async function resetConvo() {
+  if (!activeCase || !confirm('Reset conversation for ' + formatPhone(activeCase.phone) + '?')) return;
+  BASE = document.getElementById('backendUrl').value.replace(/\/$/, '');
+  try {
+    await fetch(BASE + '/api/conversations/' + activeCase.phone, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } });
+    toast('Conversation reset ✓', 'success');
+  } catch (e) {
+    toast('Reset failed', 'error');
+  }
+}
+
+window.addEventListener('load', () => {
+  connect();
+});
+</script>
+</body>
+</html>
